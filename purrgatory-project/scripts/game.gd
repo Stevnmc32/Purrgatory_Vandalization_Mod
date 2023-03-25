@@ -157,6 +157,7 @@ func load_meowkov_chain(f):
 	f.open("res://scripts/procgen/meowutkov_edited.json", File.READ)
 	meowkov_json = JSON.parse(f.get_as_text())
 	f.close()
+	
 
 func _notification(what):
 	# when the user quits...
@@ -265,7 +266,7 @@ func change_room(label):
 	load_mural()
 
 func start_dialog(label, blackout_label=null):
-	$meta_ui/debug/Label.text = str(state)
+	
 	
 	if state.get('blackout') and blackout_label:
 		label = blackout_label

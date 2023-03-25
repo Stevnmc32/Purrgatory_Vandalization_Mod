@@ -1,4 +1,4 @@
-[gd_scene load_steps=124 format=2]
+[gd_scene load_steps=122 format=2]
 
 [ext_resource path="res://scripts/game.gd" type="Script" id=1]
 [ext_resource path="res://scenes/ss.tscn" type="PackedScene" id=2]
@@ -80,7 +80,6 @@
 [ext_resource path="res://scenes/load_menu.tscn" type="PackedScene" id=78]
 [ext_resource path="res://scripts/history.gd" type="Script" id=79]
 [ext_resource path="res://assets/ui/history.png" type="Texture" id=80]
-[ext_resource path="res://scripts/debug.gd" type="Script" id=81]
 [ext_resource path="res://scripts/negative_cover.gd" type="Script" id=82]
 [ext_resource path="res://scripts/draw.gd" type="Script" id=83]
 [ext_resource path="res://scripts/ttt_draw.gd" type="Script" id=84]
@@ -434,9 +433,6 @@ don't exit the game yet!", "saving..
 don't exit the game yet!", "saving...
 don't exit the game yet!" ]
 }
-
-[sub_resource type="StyleBoxFlat" id=36]
-bg_color = Color( 1, 1, 1, 0.619608 )
 
 [sub_resource type="Shader" id=37]
 code = "shader_type canvas_item;
@@ -1894,77 +1890,6 @@ mouse_filter = 2
 theme = ExtResource( 11 )
 columns = 2
 
-[node name="debug" type="Control" parent="meta_ui"]
-visible = false
-margin_top = 23.2134
-margin_right = 40.0
-margin_bottom = 63.2134
-rect_scale = Vector2( 0.7, 0.7 )
-script = ExtResource( 81 )
-
-[node name="LineEdit" type="LineEdit" parent="meta_ui/debug"]
-margin_left = 36.0
-margin_top = 53.0
-margin_right = 496.0
-margin_bottom = 97.0
-
-[node name="Button" type="Button" parent="meta_ui/debug"]
-margin_left = 508.376
-margin_top = 54.6
-margin_right = 608.376
-margin_bottom = 94.6
-text = "state"
-
-[node name="Button2" type="Button" parent="meta_ui/debug"]
-margin_left = 621.236
-margin_top = 54.5476
-margin_right = 719.236
-margin_bottom = 94.5476
-text = "remove"
-
-[node name="LineEdit2" type="LineEdit" parent="meta_ui/debug"]
-margin_left = 36.0
-margin_top = 109.0
-margin_right = 496.0
-margin_bottom = 153.0
-
-[node name="Button3" type="Button" parent="meta_ui/debug"]
-margin_left = 508.376
-margin_top = 110.6
-margin_right = 608.376
-margin_bottom = 150.6
-text = "room"
-
-[node name="LineEdit3" type="LineEdit" parent="meta_ui/debug"]
-margin_left = 36.0
-margin_top = 164.387
-margin_right = 496.0
-margin_bottom = 208.387
-
-[node name="Button4" type="Button" parent="meta_ui/debug"]
-margin_left = 508.376
-margin_top = 165.987
-margin_right = 608.376
-margin_bottom = 205.987
-text = "block"
-
-[node name="Label" type="Label" parent="meta_ui/debug"]
-visible = false
-margin_left = 36.0
-margin_top = 227.0
-margin_right = 612.0
-margin_bottom = 973.0
-custom_styles/normal = SubResource( 36 )
-autowrap = true
-
-[node name="Button" type="Button" parent="meta_ui"]
-margin_left = 110.488
-margin_top = 17.4169
-margin_right = 261.488
-margin_bottom = 57.4169
-rect_scale = Vector2( 0.5, 0.5 )
-text = "debug"
-
 [node name="white_cover" type="ColorRect" parent="."]
 visible = false
 anchor_right = 1.0
@@ -2137,11 +2062,6 @@ translations = [ "hecho" ]
 [connection signal="hiding" from="meta_ui/load_menu" to="meta_ui/menu_button" method="show"]
 [connection signal="load_file" from="meta_ui/load_menu" to="." method="load_game_while_playing"]
 [connection signal="pressed" from="meta_ui/history/back" to="meta_ui/history" method="hide_custom"]
-[connection signal="pressed" from="meta_ui/debug/Button" to="meta_ui/debug" method="_on_Button_pressed"]
-[connection signal="pressed" from="meta_ui/debug/Button2" to="meta_ui/debug" method="_on_Button2_pressed"]
-[connection signal="pressed" from="meta_ui/debug/Button3" to="meta_ui/debug" method="_on_Button3_pressed"]
-[connection signal="pressed" from="meta_ui/debug/Button4" to="meta_ui/debug" method="_on_Button4_pressed"]
-[connection signal="pressed" from="meta_ui/Button" to="meta_ui/debug" method="toggle_visibility"]
 [connection signal="draw" from="draw/draw_viewport/pen" to="draw/draw_viewport/pen" method="_on_draw"]
 [connection signal="pressed" from="draw/done_button" to="." method="stop_drawing"]
 [connection signal="pressed" from="draw/erase_button" to="." method="erase_mural"]
