@@ -1,4 +1,4 @@
-[gd_scene load_steps=121 format=2]
+[gd_scene load_steps=124 format=2]
 
 [ext_resource path="res://scripts/game.gd" type="Script" id=1]
 [ext_resource path="res://scenes/ss.tscn" type="PackedScene" id=2]
@@ -82,6 +82,9 @@
 [ext_resource path="res://assets/ui/history.png" type="Texture" id=80]
 [ext_resource path="res://scripts/debug.gd" type="Script" id=81]
 [ext_resource path="res://scripts/negative_cover.gd" type="Script" id=82]
+[ext_resource path="res://scripts/draw.gd" type="Script" id=83]
+[ext_resource path="res://scripts/ttt_draw.gd" type="Script" id=84]
+[ext_resource path="res://assets/ui/ttt_done.png" type="Texture" id=85]
 
 [sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("ss")
@@ -1235,6 +1238,40 @@ valign = 1
 script = ExtResource( 17 )
 translations = [ "historial" ]
 
+[node name="history_button3" type="Button" parent="meta_ui"]
+margin_left = 598.0
+margin_top = 685.0
+margin_right = 674.0
+margin_bottom = 711.0
+focus_mode = 0
+mouse_filter = 1
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 14 )
+shortcut_in_tooltip = false
+enabled_focus_mode = 0
+shortcut = SubResource( 33 )
+flat = true
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="box2" type="Sprite" parent="meta_ui/history_button3"]
+position = Vector2( 2.2108, 1.67036 )
+texture = ExtResource( 24 )
+centered = false
+offset = Vector2( -8.3689, -6.12292 )
+
+[node name="Label" type="Label" parent="meta_ui/history_button3"]
+margin_top = 1.0
+margin_right = 77.0
+margin_bottom = 27.0
+custom_fonts/font = SubResource( 17 )
+text = "draw"
+align = 1
+valign = 1
+script = ExtResource( 17 )
+translations = [ "historial" ]
+
 [node name="pause_menu" type="Control" parent="meta_ui"]
 visible = false
 margin_right = 1280.0
@@ -1953,6 +1990,93 @@ margin_bottom = 720.0
 mouse_filter = 2
 color = Color( 0, 0, 0, 1 )
 
+[node name="draw" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+mouse_filter = 1
+script = ExtResource( 83 )
+
+[node name="draw_viewport" type="Viewport" parent="draw"]
+size = Vector2( 1280, 720 )
+transparent_bg = true
+usage = 0
+render_target_v_flip = true
+render_target_clear_mode = 2
+
+[node name="pen" type="Control" parent="draw/draw_viewport"]
+margin_right = 1280.0
+margin_bottom = 720.0
+script = ExtResource( 84 )
+
+[node name="loaded_texture" type="TextureRect" parent="draw"]
+margin_right = 1280.0
+margin_bottom = 720.0
+mouse_filter = 2
+stretch_mode = 3
+
+[node name="draw_texture" type="TextureRect" parent="draw"]
+margin_right = 1280.0
+margin_bottom = 720.0
+mouse_filter = 2
+stretch_mode = 3
+
+[node name="done_button" type="Button" parent="draw"]
+visible = false
+anchor_right = 1.0
+margin_left = 437.0
+margin_top = 597.0
+margin_right = 593.023
+margin_bottom = 668.0
+focus_mode = 0
+enabled_focus_mode = 0
+flat = true
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="draw/done_button"]
+position = Vector2( 2.55439, -29.7181 )
+texture = ExtResource( 85 )
+centered = false
+
+[node name="Label" type="Label" parent="draw/done_button"]
+margin_left = 68.8147
+margin_top = 19.9905
+margin_right = 125.815
+margin_bottom = 53.9905
+rect_pivot_offset = Vector2( -555.677, -604.755 )
+theme = ExtResource( 15 )
+text = "done"
+script = ExtResource( 17 )
+translations = [ "hecho" ]
+
+[node name="erase_button" type="Button" parent="draw"]
+visible = false
+anchor_right = 1.0
+margin_left = 634.0
+margin_top = 597.0
+margin_right = 792.0
+margin_bottom = 667.0
+focus_mode = 0
+enabled_focus_mode = 0
+flat = true
+
+[node name="Sprite" type="Sprite" parent="draw/erase_button"]
+position = Vector2( 2.55439, -29.7181 )
+texture = ExtResource( 85 )
+centered = false
+
+[node name="Label" type="Label" parent="draw/erase_button"]
+margin_left = 68.8147
+margin_top = 19.9905
+margin_right = 125.815
+margin_bottom = 53.9905
+rect_pivot_offset = Vector2( -555.677, -604.755 )
+theme = ExtResource( 15 )
+text = "erase"
+script = ExtResource( 17 )
+translations = [ "hecho" ]
+
 [connection signal="timeout" from="skip_timer" to="." method="update_dialog" binds= [ -1 ]]
 [connection signal="pressed" from="content/ui/name_input/pronouns/custom" to="content/ui/name_input/custom_pronouns" method="show"]
 [connection signal="pressed" from="content/ui/name_input/ok_button" to="." method="set_player_name"]
@@ -1968,8 +2092,8 @@ color = Color( 0, 0, 0, 1 )
 [connection signal="pressed" from="content/ui/history_button" to="meta_ui/history" method="toggle"]
 [connection signal="mouse_entered" from="meta_ui/menu_button" to="content/room" method="stop_all_hovering"]
 [connection signal="mouse_exited" from="meta_ui/menu_button" to="content/room" method="start_all_hovering"]
-[connection signal="pressed" from="meta_ui/menu_button" to="." method="toggle_pause_menu"]
 [connection signal="pressed" from="meta_ui/menu_button" to="." method="turn_off_skip"]
+[connection signal="pressed" from="meta_ui/menu_button" to="." method="toggle_pause_menu"]
 [connection signal="examine_item" from="meta_ui/dropdown" to="." method="examine_item"]
 [connection signal="mouse_entered" from="meta_ui/dropdown" to="content/room" method="stop_all_hovering"]
 [connection signal="mouse_exited" from="meta_ui/dropdown" to="content/room" method="start_all_hovering"]
@@ -1985,6 +2109,7 @@ color = Color( 0, 0, 0, 1 )
 [connection signal="mouse_exited" from="meta_ui/history_button2" to="content/room" method="start_all_hovering"]
 [connection signal="pressed" from="meta_ui/history_button2" to="." method="turn_off_skip"]
 [connection signal="pressed" from="meta_ui/history_button2" to="meta_ui/history" method="toggle"]
+[connection signal="pressed" from="meta_ui/history_button3" to="." method="start_drawing"]
 [connection signal="pressed" from="meta_ui/pause_menu/buttons/save" to="meta_ui/menu_button" method="hide"]
 [connection signal="pressed" from="meta_ui/pause_menu/buttons/save" to="meta_ui/save_menu" method="show_custom"]
 [connection signal="pressed" from="meta_ui/pause_menu/buttons/load" to="meta_ui/menu_button" method="hide"]
@@ -2017,3 +2142,6 @@ color = Color( 0, 0, 0, 1 )
 [connection signal="pressed" from="meta_ui/debug/Button3" to="meta_ui/debug" method="_on_Button3_pressed"]
 [connection signal="pressed" from="meta_ui/debug/Button4" to="meta_ui/debug" method="_on_Button4_pressed"]
 [connection signal="pressed" from="meta_ui/Button" to="meta_ui/debug" method="toggle_visibility"]
+[connection signal="draw" from="draw/draw_viewport/pen" to="draw/draw_viewport/pen" method="_on_draw"]
+[connection signal="pressed" from="draw/done_button" to="." method="stop_drawing"]
+[connection signal="pressed" from="draw/erase_button" to="." method="erase_mural"]

@@ -6,6 +6,8 @@ signal animation_tick()
 export var default_room = ''
 var save_ticker = 0
 
+var savefile = ""
+
 var state = {
 	'true': true
 }
@@ -259,6 +261,8 @@ func change_room(label):
 	
 	if stop_hovering:
 		room.stop_all_hovering()
+		
+	load_mural()
 
 func start_dialog(label, blackout_label=null):
 	$meta_ui/debug/Label.text = str(state)
@@ -318,12 +322,14 @@ func start_dialog(label, blackout_label=null):
 		check_special_states(pair)
 		
 	room.stop_all_hovering()
+	$draw.hide()
 
 func end_dialog():
 	ui.hide_ui()
 	$meta_ui/history_button2.show()
 	room.end_dialog()
 	room.start_all_hovering()
+	$draw.show()
 	block = null
 
 # block = {
@@ -633,7 +639,7 @@ func save(file, manual=true):
 	#   image first
 	# (this is why we save images before the state: draw_a_paw needs to modify the state
 	#  to store the x and y coordinates of the tip)
-	
+	savefile=str(file)
 	if room.get_current_room() == "hallway2" and state.get('mural_drawing'): 
 		room.current_room.get_node('state_handler').store_image()
 		
@@ -797,6 +803,7 @@ func load_game_while_playing(file):
 	$meta_ui/load_confirm.show()
 
 func load_game(file):
+	savefile=str(file)
 	var save_game = File.new()
 	if not save_game.file_exists("user://save" + str(file) + ".save"):
 		reset_state(true)
@@ -820,10 +827,10 @@ func load_game(file):
 	# drawings need to be loaded separately
 	
 	var f = File.new()
-	if f.file_exists("user://mural" + str(file) + ".png"):
+	if f.file_exists("user://mural" + str(file) + str(room.get_current_room()) + ".png"):
 		mural_drawing = Image.new()
-		mural_drawing.load("user://mural" + str(file) + ".png")
-	else:
+		mural_drawing.load("user://mural" + str(file) + str(room.get_current_room()) + ".png")
+	else :
 		mural_drawing = null
 		
 	if f.file_exists("user://draw_a_paw" + str(file) + ".png"):
@@ -884,6 +891,8 @@ func load_game(file):
 			state.get('dropoff_progress'),\
 			state.get('dropoff_stamina')\
 		)
+		
+	load_mural()
 			
 func reset_state(reset_room):
 	end_dialog()
@@ -930,9 +939,11 @@ func toggle_pause_menu():
 func open_pause_menu():
 	$tts_node.stop()
 	$meta_ui/pause_menu.show_custom()
+	$draw.hide()
 
 func close_pause_menu():
 	$meta_ui/pause_menu.hide_custom()
+	$draw.show()
 
 func options_changed():
 	var state_handler = room.find_node('state_handler', true, false)
@@ -1011,6 +1022,71 @@ func test_add_quest():
 func test_remove_quest():
 	check_special_states([$meta_ui/dropdown/quest_debug.text, false])
 
+func start_drawing():
+	$draw/draw_texture.set_texture($draw/draw_viewport.get_texture())
+	$draw.enable()
+	$draw.mouse_filter = Control.MOUSE_FILTER_PASS
+	$draw / draw_texture.mouse_filter = Control.MOUSE_FILTER_PASS
+	$draw/done_button.show()
+	$draw/erase_button.show()
+	
+func stop_drawing():
+	$draw.disable()
+	$draw.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$draw / draw_texture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$draw/done_button.hide()
+	$draw/erase_button.hide()
+	self.state["mural_drawing"] = false
+	
+	store_image()
+
+func store_image():
+	var texture = $draw / draw_texture.texture
+	var final_img = null
+	
+	if texture:
+		var new_img = texture.get_data()
+		
+		if $draw / loaded_texture.texture:
+			final_img = $draw / loaded_texture.texture.get_data()
+			final_img.blend_rect(new_img, Rect2(Vector2(0, 0), Vector2(1280, 720)), Vector2(0, 0))
+		else :
+			final_img = new_img
+		
+	mural_drawing = final_img
+	if mural_drawing:
+		mural_drawing.save_png("user://mural" + str(savefile) + str(room.get_current_room()) + ".png")
+	else :
+		var dir = Directory.new()
+		if dir.file_exists("user://mural" + str(savefile) + str(room.get_current_room()) + ".png"):
+			dir.remove("user://mural" + str(savefile) + str(room.get_current_room()) + ".png")
+
+func erase_mural():
+	$draw/draw_viewport/pen.to_erase=true
+	$draw/loaded_texture.texture = null
+
+func load_mural():
+	#$draw/loaded_texture.set_texture(null)
+	#$draw/draw_texture.set_texture(null)
+	
+	mural_drawing=null
+	var f = File.new()
+	if f.file_exists("user://mural" + str(savefile) + str(room.get_current_room()) + ".png"):
+		mural_drawing = Image.new()
+		mural_drawing.load("user://mural" + str(savefile) + str(room.get_current_room()) + ".png")
+		$draw/loaded_texture.texture = ImageTexture.new()
+		$draw/loaded_texture.texture.create_from_image(mural_drawing)
+		$draw/draw_viewport/pen.to_erase=true
+		$draw/draw_viewport/pen.to_load_mural=true
+	else :
+		mural_drawing = null
+		$draw/loaded_texture.texture = null
+		$draw/draw_viewport/pen.to_erase=true
+	
+	
+		#$draw/draw_texture.texture=ImageTexture.new().create_from_image(Image.new().create(1280,720,false,Image.FORMAT_RGB8))
+	
+
 # this is called from the save/load screens when you delete your data
 # just so that we can delete seen_blocks
 func deleted_data():
@@ -1019,4 +1095,6 @@ func deleted_data():
 # only used during the credits as of now
 func disable_ui():
 	$meta_ui.hide()
+
+
 
